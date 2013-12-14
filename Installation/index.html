@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="Keywords"
+      content="SW,Samuraiworks d3,d3.js,coffee,coffeescript,physics,D3,D3JS,nakakaz11,svg,canvas,dom,voronoi,affine">
+<meta name="Description" content="">
+<link rel="shortcut icon" type="image/ico" href="/favicon.ico">
+<meta name="robots" content="INDEX,FOLLOW">
+<meta name="viewport" content="width=1024">
+<title>CoffeePhysics</title>
+<style type="text/css" media="screen">
+/*@import url(//fonts.googleapis.com/css?family=Play:400,700);*/
+@import url(//fonts.googleapis.com/css?family=Maven+Pro:400,700);
+
+html, body {
+  /*font-family: 'Play', sans-serif;*/
+  font-family: 'Maven Pro', sans-serif;
+  margin: 0;
+}
+
+body {
+  /*position: relative;
+  z-index: 1;*/
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  min-height: 1000px;
+  overflow: hidden;
+  color: #FFFFFF;
+
+}
+
+#container,
+#SketchSW {
+  width: 100%;
+  height: 100%;
+  background: #f3f3f3;
+}
+
+div.dg.ac {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 0;
+  z-index: 999;
+}
+
+.dg li.save-row .button {
+  margin-left: 4px;
+}
+
+.stats {
+  position: absolute;
+  right: 20px;
+  bottom: 20px;
+  z-index: 999;
+}
+
+#content {
+  position: absolute;
+  width: 211px;
+  left: 20px;
+  top: 20px;
+  z-index: 999;
+}
+
+#info {
+  background: rgba(0, 0, 0, 0.8);
+  padding: 12px 10px;
+  margin-bottom: 1px;
+  color: #fff;
+  border-top-left-radius: 7px;
+  border-top-right-radius: 7px;
+  cursor: help;
+}
+
+#info h1 {
+  line-height: 22px;
+  font-weight: 300;
+  font-size: 18px;
+  margin: 0;
+}
+
+#info h2 {
+  line-height: 14px;
+  font-weight: 300;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.8);
+  margin: 0 0 6px 0;
+}
+
+#info a,
+.col {
+  text-transform: uppercase;
+  text-decoration: none;
+  border-bottom: 1px dotted rgba(255, 255, 255, 0.2);
+  margin-right: 4px;
+  line-height: 20px;
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+#info a:hover {
+  border-bottom: 1px dotted rgba(255, 255, 255, 0.6);
+  color: rgba(255, 255, 255, 1.0);
+}
+
+.select {
+  margin-bottom: 10px;
+}
+
+.select ul {
+  padding: 0;
+  margin: 0;
+}
+
+.select li {
+  list-style: none;
+  margin: 1px 0;
+}
+
+.select a {
+  -webkit-transition: all 300ms ease-out;
+  background: rgba(0, 0, 0, 0.8);
+  text-decoration: none;
+  padding-left: 10px;
+  line-height: 24px;
+  font-size: 12px;
+  display: block;
+  color: rgba(255, 255, 255, 0.5);
+  opacity: 0.2;
+}
+
+.select a:hover,
+.select a.active {
+  color: rgba(255, 255, 255, 1.0);
+}
+
+.select a.active {
+  border-left: 4px solid #fff;
+  opacity: 0.5;
+}
+
+#content:hover .select a {
+  opacity: 1.0;
+}
+
+/**
+ * Nudge down to get to 13px equivalent for these form elements
+ */
+select,
+input,
+button,
+textarea {
+  font: 99% arial, helvetica, clean, sans-serif;
+}
+
+select option {
+  padding: 3px;
+}
+
+/* SVG testing */
+.resample {
+  /*fill              : #b8a169;*/
+  fill: none;
+
+  fill-opacity: .11;
+  stroke: #b8a169;
+  stroke-width: 1.0px;
+  stroke-opacity: .35;
+}
+
+.swD3tText {
+  text-shadow: 1px 1px 0px #cc87a2;
+  color: #ec1e8a;
+  /*margin-left: 1em;*/
+  fill: #ec1e8a;
+  fill-opacity: .75;
+}
+
+.swD3t {
+}
+
+.swD3p {
+}
+
+.swD3c {
+  z-index: 0;
+}
+
+.swD3c, .swD3p {
+  opacity: .75;
+  stroke: #fff;
+  stroke-width: 1.0px;
+  stroke-opacity: .5;
+}
+
+.swD3c:hover, .swD3p:hover {
+  stroke-opacity: 1;
+  stroke: #ec1e8a;
+  stroke-width: 5.0px;
+  cursor: pointer;
+}
+
+.swD3svgContainer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 2;
+}
+
+div.swD3divContainer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+}
+
+div.swD3div {
+  position: absolute;
+  font-size: 9px;
+  text-shadow: 1px 1px 0px #cc87a2;
+  color: #ec1e8a;
+  opacity: .75;
+
+  float: left;
+  min-width: 40px;
+  min-height: 15px;
+  cursor: pointer;
+  z-index: 111;
+}
+
+/* Voronoi */
+.vLine {
+  fill: none;
+  stroke: #80b660;
+  stroke-width: 1.0px;
+  stroke-opacity: .35;
+  pointer-events: none
+}
+
+.vPath {
+  fill: none;
+  stroke: #848387;
+  stroke-width: 1.0px;
+  stroke-opacity: .35;
+  pointer-events: none
+}
+
+
+</style>
+</head>
+<body>
+<div id="container"></div>
+
+<!-- SW CSS js -->
+<script type="text/javascript" data-main="Installation_main" src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.9/require.min.js"></script>
+<!-- / SW CSS js -->
+
+</body>
+</html>
